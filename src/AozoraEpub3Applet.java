@@ -4658,7 +4658,7 @@ public class AozoraEpub3Applet extends JApplet
 		try {
 			String lafName = UIManager.getSystemLookAndFeelClassName();
 			//lafName = "";
-			if (lafName.startsWith("com.sun.java.swing.plaf.windows.")) {
+			if (lafName.contains("windows")) {
 				UIManager.setLookAndFeel(lafName);
 			} else {
 				//Windows以外はMetalのままでFontはPLAIN

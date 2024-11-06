@@ -9,7 +9,6 @@ import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.awt.image.IndexColorModel;
 import java.awt.image.LookupOp;
-import java.awt.image.RenderedImage;
 import java.awt.image.WritableRaster;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
@@ -31,8 +30,6 @@ import org.apache.commons.compress.utils.IOUtils;
 
 import com.github.hmdev.info.ImageInfo;
 import com.github.hmdev.util.LogAppender;
-import com.sun.media.jai.codec.ImageCodec;
-import com.sun.media.jai.codec.ImageDecoder;
 
 public class ImageUtils
 {
@@ -101,17 +98,14 @@ public class ImageUtils
 	static public BufferedImage readImage(String ext, InputStream is) throws IOException
 	{
 		BufferedImage image;
-		if (ext.equals("jpg") || ext.equals("jpeg")) {
-			try {
-				ImageDecoder dec = ImageCodec.createImageDecoder("jpeg", is, null);
-				RenderedImage ri = dec.decodeAsRenderedImage();
-				image = new BufferedImage(ri.getWidth(), ri.getHeight(), BufferedImage.TYPE_INT_RGB);
-				image.createGraphics().drawRenderedImage(ri, NO_TRANSFORM);
-			} catch (Exception e) {
-				image = ImageIO.read(is);
+		try (InputStream inputStream = is) {
+			if ("jpg".equalsIgnoreCase(ext) || "jpeg".equalsIgnoreCase(ext)) {
+				image = ImageIO.read(inputStream);
+			} else {
+				image = ImageIO.read(inputStream);
 			}
-		} else {
-			image = ImageIO.read(is);
+		} catch (IOException e) {
+			throw new IOException("Error reading image: " + e.getMessage(), e);
 		}
 		is.close();
 		return image;
